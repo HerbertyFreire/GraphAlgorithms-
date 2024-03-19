@@ -14,8 +14,8 @@ void dfs(int node, vector<int> &vis, vector<int> adj[], stack<int> &stack)
         {
             dfs(i, vis, adj, stack);
         }
-        stack.push(node);
     }
+    stack.push(node);
 }
 
 void dfs_reverse(int node, vector<int> &vis, vector<int> adjReverse[], vector<int> &component)
@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
             cout << "-h: mostra help" << endl;
             cout << "-o <arquivo>: redireciona a saída para o arquivo" << endl;
             cout << "-f <arquivo>: lê o grafo do arquivo" << endl;
-            cout << "-i: vértice inicial << endl";
             return 0;
         }
         else if (strcmp(argv[i], "-o") == 0)
@@ -157,17 +156,9 @@ int main(int argc, char *argv[])
 
         fout.close();
     } else {
-        for (const auto &cfc : cfcs)
-        {
-            int contador = 0;
-            for (int node : cfc)
-            {
-                if (contador == cfc.size() - 1) {
-                    cout << node + 1;
-                } else {
-                    cout << node + 1 << " ";
-                }
-                contador++; // Adjusting indices to start from 1
+        for (const auto &component : cfcs) {
+            for (int node : component) {
+                cout << node+1 << " ";
             }
             cout << endl;
         }
