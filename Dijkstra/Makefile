@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall
-TARGET=dijkstra
+TARGET=dijkstra.bin
 
 all: $(TARGET)
 

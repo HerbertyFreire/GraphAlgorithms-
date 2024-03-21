@@ -1,5 +1,5 @@
 build: main.cpp kruskal.cpp ../utils/utils.cpp ../utils/graph.cpp
-	g++ main.cpp kruskal.cpp ../utils/utils.cpp ../utils/graph.cpp -o kruskal
+	g++ main.cpp kruskal.cpp ../utils/utils.cpp ../utils/graph.cpp -o kruskal.bin
 
 clean:
-	rm kruskal
+	rm kruskal.bin

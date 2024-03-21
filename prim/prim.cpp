@@ -1,80 +1,89 @@
-#include <sstream>
-#include <limits.h>
-using namespace std;
-
 #include "prim.h"
+#include <bits/stdc++.h>
+typedef pair<int, int> Pair;
 
-#include "../utils/graph.h"
 
-int** solution_graph(int size) {
-  int** graph = new int * [size];
-
-  for (int i = 0; i < size; i++) {
-    graph[i] = new int[size];
-
-    for (int j = 0; j < size; j++) {
-      graph[i][j] = -INT_MAX;
+Grafo::Grafo(int vertices) {
+    this->vertices = vertices;
+    for (int i = 0; i <= vertices; i++) {
+        this->adj.push_back(NULL);
     }
-  }
-
-  return graph;
 }
 
-int prim(Graph* graph, int src, bool solution, ostream* output) {
-  int cost = 0;
-  int v_count = graph->getSize();
+void Grafo::adcAresta(int vertc1, int vertc2, int peso) {
+    node* edge = (node*) malloc(sizeof(node));
+    edge->destino = vertc2;
+    edge->peso = peso;
+    edge->next = adj[vertc1];
+    adj[vertc1] = edge;
+}
 
-  int visited[v_count] = {};
-  int n_visited = 1;
-  visited[src] = 1;
+int custo_total(vector<int> custos){
+    int total = 0;
+    for(int i=1; i<custos.size(); i++) {
+        total += custos[i];
+    }
+    return total;
+}
 
-  int** solution_list = solution_graph(v_count);
+void Grafo::Prim(Grafo grafo, int inicial, const char* output, bool solution) {
+    int v = grafo.vertices;
+    vector<node*> arestas = grafo.adj; 
+    vector<int> custos;
+    vector<int> prev;
+    vector<bool> visitados;
 
-  while (n_visited < v_count) {
-    int current_min = INT_MAX;
-    int pos_i, pos_j = 0;
+    for(int i=0; i <= grafo.vertices; i++){
+        custos.push_back(INF);
+        prev.push_back(-1);  
+        visitados.push_back(false);
+    }
 
-    for (int i = 0; i < v_count; i++) {
-      if (visited[i]) {
-        Node* current_node = graph->getHead()[i];
+    priority_queue<pair<int,int>, vector <pair<int,int>>, greater<pair<int,int>>> min_heap;
 
-        while (current_node != nullptr) {
-          int j = current_node->value;
+    custos[inicial] = 0;
+    min_heap.push(make_pair(custos[inicial], inicial));
 
-          if (!visited[j]) {
-            int curret_cost = current_node->cost;
+    while(min_heap.size() > 0) {
+        int u = min_heap.top().second; 
+        min_heap.pop();
+        visitados[u] = true;  
+        node *current = arestas[u];
+        while(current != NULL) {
+            int peso = current->peso;
+            int destino = current->destino;
 
-            if (curret_cost < current_min) {
-              current_min = curret_cost;
-              pos_i = i;
-              pos_j = j;
+            if(!visitados[destino] && custos[destino] > peso){
+                custos[destino] = peso;
+                prev[destino] = u; 
+                min_heap.push(make_pair(custos[destino], destino));
             }
-          }
-
-          current_node = current_node->next;
+            current = current->next;
         }
-      }
     }
-
-    visited[pos_j] = current_min;
-    n_visited += 1;
-
-    solution_list[pos_i][pos_j] = current_min;
-
-    cost += current_min;
-  }
-
-  if (solution) {
-    for (int i = 0; i < v_count; i++) {
-      for (int j = 0; j < v_count; j++) {
-        if (solution_list[i][j] > -INT_MAX) {
-
-          *output << "(" << i + 1 << "," << j + 1 << ") ";
+    
+    if (output) {
+        ofstream output_file;
+        output_file.open(output);
+        if (solution) {
+            for (int i = 0; i < prev.size(); i++) {  
+                if (prev[i] == -1) continue;
+				output_file << "(" << prev[i] << "," << i << ") ";
+            }
+            output_file << endl;
+        } else {
+            output_file << custo_total(custos) << endl;
         }
-      }
+        output_file.close();
+    } else {
+        if (solution) {
+            for (int i = 0; i < prev.size(); i++) {  
+                if (prev[i] == -1) continue;
+				cout << "(" << prev[i] << "," << i << ") ";
+            }
+            cout << endl;
+        } else {
+            cout << custo_total(custos) << endl;
+        }
     }
-    *output << endl;
-  }
-
-  return cost;
 }

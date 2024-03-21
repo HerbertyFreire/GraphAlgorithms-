@@ -1,34 +1,30 @@
-#include <iostream>
+#include "prim.h"
+#include "../utils/utils_.h"
+#include "main.h"
+
 using namespace std;
 
-#include "prim.h"
-
-#include "../utils/utils.h"
-#include "../utils/graph.h"
-
 int main(int argc, char** argv) {
-  Argument args;
-  bool sucess = get_arguments(argc, argv, &args);
-
-  if (sucess) {
-    if (args.help) {
-      help_arguments("Prim's algorithm is a greedy algorithm that finds a minimum spanning tree for a weighted undirected graph.", true, false);
-    } else {
-      if (args.initial != -1) {
-        Graph graph = create_graph(args.input, true);
-
-        int cost = prim(&graph, args.initial - 1, args.solution, args.output);
-        
-        if (!args.solution) {
-          *args.output << cost << endl;
+    Argument args;
+    bool param = get_arguments(argc, argv, &args);
+    if (param) {
+        if (args.help) {
+            help_arguments("O algoritmo de Prim encontra a AGM (Árvore geradora mínima) do grafo, com complexidade O(|E| log|V|).", true);
+        } else if (args.input) {
+            Grafo grafo = read_graph_file(args.input);
+            if (args.initial != -1) {
+                grafo.Prim(grafo, args.initial, args.output, args.solution);
+            } else {
+                grafo.Prim(grafo, 1, args.output, args.solution);
+            }
+        } else {
+            Grafo grafo = read_graph_file("graph.in");
+            if (args.initial != -1) {
+                grafo.Prim(grafo, args.initial, args.output, args.solution);
+            } else {
+                grafo.Prim(grafo, 1, args.output, args.solution);
+            }
         }
-      } else {
-        cout << "Missing start vertex argument (-i)!" << endl;
-      }
     }
-  } else {
-    cout << "The arguments entered are invalid!" << endl;
-  }
-
-  return 0;
+    return 0;
 }

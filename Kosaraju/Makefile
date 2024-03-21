@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall
-TARGET=kosaraju
+TARGET=kosaraju.bin
 
 all: $(TARGET)
 

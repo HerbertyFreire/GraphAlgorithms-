@@ -1,25 +1,27 @@
 #ifndef PRIM_H
 #define PRIM_H
 
-#include "../utils/graph.h"
+#include <bits/stdc++.h>
+#define INF 0x3f3f3f3f
+using namespace std;
 
-/*!
- * @function    solution_graph
- * @abstract    Create a square matrix with (size * size) elements equal to INT_MAX
- * @param       size    Size o matrix.
- * @result      Square matrix with (size * size) elements equal to INT_MAX
-*/
-int** solution_graph(int size);
+typedef pair<int, int> Pair;
 
-/*!
- * @function    prim
- * @abstract    Prim algorithm.
- * @param       graph       Pointer to a graph.
- * @param       src         Source node.
- * @param       solution    Boolean informing if the solution will be presented.
- * @param       output      Pointer to the output data.
- * @result      Cost of minimum spanning tree.
-*/
-int prim(Graph* graph, int src, bool solution, ostream* output);
+typedef struct Node node;
+
+struct Node{
+    int destino;
+    int peso;
+    node* next;
+};
+
+class Grafo {
+    int vertices;
+    vector <node*> adj;
+public:
+    Grafo(int vertice);
+    void adcAresta(int vertc1, int vertc2, int peso);
+    void Prim(Grafo grafo, int inicial, const char* output, bool solution);
+};
 
 #endif

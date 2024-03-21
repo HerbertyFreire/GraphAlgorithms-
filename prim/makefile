@@ -1,5 +1,5 @@
-build: main.cpp prim.cpp ../utils/utils.cpp ../utils/graph.cpp
-	g++ main.cpp prim.cpp ../utils/utils.cpp ../utils/graph.cpp -o prim
+build: main.cpp prim.cpp
+	g++ main.cpp prim.cpp ../utils/utils_.cpp -o prim.bin
 
 clean:
-	rm prim
+	rm prim.bin
