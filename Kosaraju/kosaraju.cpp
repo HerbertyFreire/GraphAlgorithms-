@@ -5,65 +5,65 @@
 #include <fstream>
 using namespace std;
 
-void dfs(int node, vector<int> &vis, vector<int> adj[], stack<int> &stack)
+void dfs(int no, vector<int> &visitado, vector<int> adj[], stack<int> &pilha)
 {
-    vis[node] = 1;
-    for (auto i : adj[node])
+    visitado[no] = 1;
+    for (auto vizinho : adj[no])
     {
-        if (!vis[i])
+        if (!visitado[vizinho])
         {
-            dfs(i, vis, adj, stack);
+            dfs(vizinho, visitado, adj, pilha);
         }
     }
-    stack.push(node);
+    pilha.push(no);
 }
 
-void dfs_reverse(int node, vector<int> &vis, vector<int> adjReverse[], vector<int> &component)
+void dfs_inverso(int no, vector<int> &visitado, vector<int> adjInvertido[], vector<int> &componente)
 {
-    vis[node] = 1;
-    component.push_back(node);
-    for (auto i : adjReverse[node])
+    visitado[no] = 1;
+    componente.push_back(no);
+    for (auto vizinho : adjInvertido[no])
     {
-        if (!vis[i])
+        if (!visitado[vizinho])
         {
-            dfs_reverse(i, vis, adjReverse, component);
+            dfs_inverso(vizinho, visitado, adjInvertido, componente);
         }
     }
 }
 
 void kosaraju(int n, vector<int> adj[], vector<vector<int>> &cfcs)
 {
-    vector<int> vis(n, 0); // visited vector
-    stack<int> stack;      // stack to store the order of vertices
+    vector<int> visitado(n, 0); // vetor de visitados
+    stack<int> pilha;      // pilha para armazenar a ordem dos vértices
 
     // DFS
     for (int i = 0; i < n; i++)
     {
-        if (!vis[i])
+        if (!visitado[i])
         {
-            dfs(i, vis, adj, stack);
+            dfs(i, visitado, adj, pilha);
         }
     }
 
-    vector<int> adjReverse[n]; // transpose of the graph (reverse edges)
+    vector<int> adjInvertido[n]; // transposição do grafo (arestas invertidas)
     for (int i = 0; i < n; i++)
     {
-        vis[i] = 0;
+        visitado[i] = 0;
         for (auto j : adj[i])
         {
-            adjReverse[j].push_back(i);
+            adjInvertido[j].push_back(i);
         }
     }
 
-    while (!stack.empty())
+    while (!pilha.empty())
     {
-        int node = stack.top();
-        stack.pop();
-        if (!vis[node])
+        int no = pilha.top();
+        pilha.pop();
+        if (!visitado[no])
         {
-            vector<int> component;
-            dfs_reverse(node, vis, adjReverse, component);
-            cfcs.push_back(component);
+            vector<int> componente;
+            dfs_inverso(no, visitado, adjInvertido, componente);
+            cfcs.push_back(componente);
         }
     }
 
@@ -72,42 +72,42 @@ void kosaraju(int n, vector<int> adj[], vector<vector<int>> &cfcs)
 
 int main(int argc, char *argv[])
 {
-    int start_node = 1;
-    string input_file = "";
-    string output_file = "null";
+    int no_inicial = 1;
+    string arquivo_entrada = "";
+    string arquivo_saida = "null";
 
     for (int i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-h") == 0)
         {
-            cout << "Help" << endl;
-            cout << "-h: mostra help" << endl;
+            cout << "Ajuda" << endl;
+            cout << "-h: mostra ajuda" << endl;
             cout << "-o <arquivo>: redireciona a saída para o arquivo" << endl;
             cout << "-f <arquivo>: lê o grafo do arquivo" << endl;
             return 0;
         }
         else if (strcmp(argv[i], "-o") == 0)
         {
-            output_file = argv[i + 1];
+            arquivo_saida = argv[i + 1];
         }
         else if (strcmp(argv[i], "-f") == 0)
         {
-            input_file = argv[i + 1];
+            arquivo_entrada = argv[i + 1];
         } else if(strcmp(argv[i], "-i") == 0){
-            start_node = atoi(argv[i+1]);
+            no_inicial = atoi(argv[i+1]);
         }
     }
 
-    if (input_file == "")
+    if (arquivo_entrada == "")
     {
-        cout << "No input file specified. Use the -f parameter" << endl;
+        cout << "Nenhum arquivo de entrada especificado. Use o parâmetro -f" << endl;
         return 1;
     }
 
-    ifstream fin(input_file);
+    ifstream fin(arquivo_entrada);
     if (!fin)
     {
-        cerr << "Could not open input file: " << input_file << endl;
+        cerr << "Não foi possível abrir o arquivo de entrada: " << arquivo_entrada << endl;
         return 1;
     }
 
@@ -121,33 +121,33 @@ int main(int argc, char *argv[])
         int v1, v2;
         fin >> v1 >> v2;
 
-        // Adjust indices to start from 0
+        // Ajustar índices para começar a partir do 0
         v1--;
         v2--;
 
-        adj[v1].push_back(v2); // Add edge to adjacency list
+        adj[v1].push_back(v2); // Adicionar aresta à lista de adjacência
     }
 
     vector<vector<int>> cfcs;
     kosaraju(n, adj, cfcs);
 
-    if (output_file != "null")
+    if (arquivo_saida != "null")
     {
-        ofstream fout(output_file);
+        ofstream fout(arquivo_saida);
         if (!fout)
         {
-            cerr << "Could not open output file: " << output_file << endl;
+            cerr << "Não foi possível abrir o arquivo de saída: " << arquivo_saida << endl;
             return 1;
         }
         for (const auto &cfc : cfcs)
         {
             int contador = 0;
-            for (int node : cfc)
+            for (int no : cfc)
             {
                 if (contador == cfc.size() - 1) {
-                    fout << node + 1;
+                    fout << no + 1;
                 } else {
-                    fout << node + 1 << " ";
+                    fout << no + 1 << " ";
                 }
                 contador++;
             }
@@ -156,12 +156,13 @@ int main(int argc, char *argv[])
 
         fout.close();
     } else {
-        for (const auto &component : cfcs) {
-            for (int node : component) {
-                cout << node+1 << " ";
+        for (const auto &componente : cfcs) {
+            for (int no : componente) {
+                cout << no+1 << " ";
             }
             cout << endl;
         }
+
     }
 
     return 0;
