@@ -6,3 +6,5 @@ bellman.o: bellman.cpp
 
 clean:
 	rm *.o bellman
+
+
